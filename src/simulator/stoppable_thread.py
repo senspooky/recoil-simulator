@@ -1,4 +1,4 @@
-from threading import Thread, Lock, Event
+from threading import Thread, Event
 
 # a thread that can be stopped
 class StoppableThread(Thread):

@@ -1,6 +1,15 @@
-# Calculating the movement of a firearm and shooter by recoil effects
+# Please help me
 
-## Momentum
+This honestly just started out as a way to make firearm recoil as accurate as possible in a GMod weapon pack, and now I'm here writing a physics simulator. At least it keeps me from being bored.
+
+## Current Problems
+
+- Order of transformations when applying multiple to an object. Is there a known good order? Should probably research.
+- Yet to pick a graphics processing library to use.
+
+## Calculating Firearm Recoil *(this was a scratch pad for me to learn physics again, can ignore, unless you're interested)*
+
+### Momentum
 
 In a closed system, the total momentum of said system sums to zero. In the case of a system made up of only the firearm, and projectile, the system can be expressed as follows:
 
@@ -31,7 +40,7 @@ where:
 
 Assuming that the forces are somewhat evenly spread out over their respective durations, this means the condition for free recoil is $t_r < t_{cr}$, while $F_r(t)+F_{cr}(t)=0$ would result in zero recoil.
 
-## Angular Momentum
+### Angular Momentum
 
 For a firearm firing under free-recoil conditions, it is likely that the recoil force will not only force the firearm backwards, but also cause it to rotate about its center of mass, or an anchor point (such as a shooter's shoulder). This can be observed on firearms where the barrel is above the center of mass or pivot point. If there is an angle for the rifle to rotate about, then the force will apply a torque to the firearm, causing it to rotate, given by:
 
@@ -60,7 +69,7 @@ Then, the angle at which the projectile leaves the barrel above the aim angle is
 
 $$\theta_f=\frac{2hm_bL}{I}$$
 
-## Accounting for ejecta
+### Accounting for ejecta
 
 The above calculations assume that the projectile is the only mass that leaves the barrel. However, in reality, the expanding gasses that propel the projectile also leave the barrel. While a projectile travels down the barrel, the expanding gasses have no effect on the firearm, as the projectile forms a plug, and so the gasses are part of a closed system. However once the projectile leaves the barrel, the gasses are free to expand, and so the firearm is no longer a closed system. The gasses will continue to expand until they reach atmospheric pressure, and in doing so, will contribute to the recoil of the firearm. A more accurate calculation of momentum of the system looks like this:
 

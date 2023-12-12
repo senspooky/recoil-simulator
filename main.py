@@ -1,8 +1,9 @@
 from time import sleep
-from simulator import Renderer, Simulation
+from src.simulator.simulation import Simulator
+from src.simulator.renderer import Renderer
 
 def syncThreads():
-    sim = Simulation()
+    sim = Simulator()
     renderer = Renderer()
     renderer.lock.acquire() # lock this guy
     sim.renderer = renderer
