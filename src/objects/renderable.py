@@ -14,14 +14,11 @@ class Renderable():
         self.__angle = 0
         self.__size = np.array([1,1])
         
-    # scale
-    def scale(self, scale=1): # scale the object in both axes with respect to origin
-        self.scale(self, scale, scale)
-        
-    def scale(self, scale_x=1, scale_y=1):
+    def scale(self, scale_xy=1.0, scale_x=1.0, scale_y=1.0):
         self.transformation_matrix = np.matmul(self.transformation_matrix, np.array([[scale_x,0,0],[0,scale_y,0],[0,0,1]]))
         self.__size[0] *= scale_x
         self.__size[1] *= scale_y
+        self.__size *= scale_xy
 
     # rotate
     def rotate(self, angle=0): # rotate the object with respect to origin

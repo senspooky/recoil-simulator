@@ -7,10 +7,8 @@ import queue
 # This is achieved by way of applying simple forces to the object over specified
 # time intervalsduring a "step". The object's position and rotation are 
 # updated accordingly based on the forces applied to it.
-class Newtonian(Renderable):
+class Newtonian():
     def __init__(self):
-        super.__init__(self)
-        
         self.pivot_point = np.array([0,0]) # the point about which the object rotates. If not anchored to a pivot, this is the centre of mass
         self.centre_of_mass = np.array([0,0]) # the point about which the object's mass is distributed
         # self.friction = 0 # might implement this later

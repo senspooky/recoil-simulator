@@ -15,14 +15,16 @@ class Force():
         
         self.__force = force # total force applied over time interval
         self.__start = start # start time of impulse
-        self.__end:np.float64 = (end if end else np.add(interval, start) if interval else 
-                      start) # end time of impulse
+        self.__end = (end if end else 
+                      np.float64(interval + start) if interval # type: ignore
+                      else start) # end time of impulse
         self.__func = func or self.__defaultFunc # constant force
     
     def __defaultFunc(self, x:np.float64) -> npt.NDArray[np.float64]:
         return np.multiply(self.__force, x)
     
-    def getAppliedForce(self, start_time:np.float64, end:np.float64 | None = None,
+    def getAppliedForce(self, start_time:np.float64, 
+                        end:np.float64 | None = None,
                         interval:np.float64 | None = None
                         ) -> npt.NDArray[np.float64] | None:
         """
@@ -59,22 +61,22 @@ class Force():
             The force applied by the impulse over the given interval of time,
             measured in Newtons. It is represented as a 2D vector, where the
             x-component is the force applied in the x-direction, and the
-            y-component is the force applied in the y-direction.
-        done: bool
-            Returns true if the impulse interval has been exhausted, ie. every 
-            following call to getAppliedForce will return a zero vector. Use
-            this to determine when to remove the force from the simulation.
+            y-component is the force applied in the y-direction. Returns None
+            if the interval takes place after the impulse has ended.
         """
         if not end and not interval:
             raise Exception("applied force have an end time or interval")
         
-        end_time = end if end else np.add(interval, start_time) if interval else start_time
+        end_time = (end if end else 
+                    np.float64(interval + start_time) if # type: ignore
+                    interval else start_time)
         
         # find overlapping time interval, if one exists
         applied_start = max(self.__start, start_time)
         applied_end = min(self.__end, end_time)
         if np.greater_equal(applied_start, applied_end):
-            return np.array([0,0]) # no overlap
+            return (np.array([0,0]) if 
+                    np.greater_equal(applied_start, self.__end) else None)
         
         # integrate the force function over the time interval
         return integrate.quad(self.__func, applied_start, 

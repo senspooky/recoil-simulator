@@ -11,13 +11,6 @@ def syncThreads():
     return sim, renderer
 
 if __name__ == "__main__":
-    # simulate M4A1
-    # gun = wt.M4A1()
-    
-    # print("momentum: " + str(gun.calcFirearmMomentum()) + " kg m/s")
-    # print("time in barrel: " + str(gun.calcTimeInBarrel()) + " s")
-    # print("force: " + str(gun.calcRecoilForce()) + " N")
-    # print("torque: " + str(gun.calcTorque()) + " N m")
     sim, engine = syncThreads()
     sim.start()
     engine.start()
