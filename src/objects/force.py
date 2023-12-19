@@ -1,22 +1,30 @@
 import numpy as np
+import numpy.typing as npt
+from typing import Callable
 import scipy.integrate as integrate
 
-class AppliedForce():
-    def __init__(self, force=np.array([0,0]), start=None, end=None, 
-                 interval=None, f_as_func_of_t=None):
-        if not start:
-            raise Exception("impulse must have a start time")
+class Force():
+    def __init__(self, force:npt.NDArray[np.float64], 
+                 start:np.float64,  end:np.float64 | None = None, 
+                 interval:np.float64 | None = None, 
+                 func:Callable[[np.float64], 
+                               npt.NDArray[np.float64]] | None = None):
+        
         if not end and not interval:
             raise Exception("impulse must have an end time or interval")
         
         self.__force = force # total force applied over time interval
         self.__start = start # start time of impulse
-        self.__end = end or start + interval # end time of impulse
-        if f_as_func_of_t is None:
-            f_as_func_of_t = lambda t: self.__force * t # constant force
-        
-    def getAppliedForce(self, start=None, end=None, 
-                        interval=None) -> (np.ndarray[float], bool):
+        self.__end:np.float64 = (end if end else np.add(interval, start) if interval else 
+                      start) # end time of impulse
+        self.__func = func or self.__defaultFunc # constant force
+    
+    def __defaultFunc(self, x:np.float64) -> npt.NDArray[np.float64]:
+        return np.multiply(self.__force, x)
+    
+    def getAppliedForce(self, start_time:np.float64, end:np.float64 | None = None,
+                        interval:np.float64 | None = None
+                        ) -> npt.NDArray[np.float64] | None:
         """
         Get the force applied to an arbitrary object over a given interval of 
         time.
@@ -57,18 +65,17 @@ class AppliedForce():
             following call to getAppliedForce will return a zero vector. Use
             this to determine when to remove the force from the simulation.
         """
-        if not start:
-            raise Exception("applied force must have a start time")
         if not end and not interval:
             raise Exception("applied force have an end time or interval")
-        end = end or start + interval
+        
+        end_time = end if end else np.add(interval, start_time) if interval else start_time
         
         # find overlapping time interval, if one exists
-        applied_start = max(self.__start, start)
-        applied_end = min(self.__end, end)
-        if applied_start >= applied_end:
+        applied_start = max(self.__start, start_time)
+        applied_end = min(self.__end, end_time)
+        if np.greater_equal(applied_start, applied_end):
             return np.array([0,0]) # no overlap
         
         # integrate the force function over the time interval
-        return integrate.quad(self.__f_as_func_of_t, applied_start, 
+        return integrate.quad(self.__func, applied_start, 
                                        applied_end)
